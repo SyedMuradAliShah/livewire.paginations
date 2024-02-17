@@ -12,6 +12,7 @@ class HomePosts extends Component
 
     public $searchTerm;
 
+
     public function updatingSearchTerm()
     {
         $this->resetPage();
@@ -24,10 +25,15 @@ class HomePosts extends Component
 
     public function getPostsProperty()
     {
-        return Post::where('title', 'like', '%' . $this->searchTerm . '%')
+        $posts = Post::where('title', 'like', '%' . $this->searchTerm . '%')
             ->orWhere('content', 'like', '%' . $this->searchTerm . '%')
             ->latest()
             ->paginate(4);
+
+        // $posts->setPath('/'); // Set custom path
+        $posts->setPath(route('home')); // Set route as custom path
+
+        return $posts;
     }
 
     public function render()

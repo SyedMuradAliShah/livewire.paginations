@@ -47,6 +47,7 @@
     <div class="row">
         <div class="col">
             {{ $posts->links('pagination.client') }}
+            {{-- {{ $posts->links('pagination.clientOriginalUrl') }} --}}
         </div>
     </div>
 </div>

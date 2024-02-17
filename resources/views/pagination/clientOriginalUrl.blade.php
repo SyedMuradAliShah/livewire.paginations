@@ -11,8 +11,9 @@
                 </li>
             @else
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->previousPageUrl() }}" rel="prev"
-                        aria-label="@lang('pagination.previous')">
+                    <a class="page-link"
+                        href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->previousPageUrl()) }}"
+                        rel="prev" aria-label="@lang('pagination.previous')">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -30,13 +31,11 @@
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
                         @if ($page == $paginator->currentPage())
-                            <li class="page-item active"
-                                wire:key="paginator-{{ $paginator->getPageName() }}-page-{{ $page }}"><a
+                            <li class="page-item active" wire:key="paginator-page-{{ $page }}"><a
                                     class="page-link" href="javascript:void(0)">{{ $page }}</a></li>
                         @else
-                            <li class="page-item"
-                                wire:key="paginator-{{ $paginator->getPageName() }}-page-{{ $page }}"><a
-                                    class="page-link" href="{{ $url }}"
+                            <li class="page-item" wire:key="paginator-page-{{ $page }}"><a class="page-link"
+                                    href="{{ str_replace(url()->current(), Livewire::originalUrl(), $url) }}"
                                     wire:navigate.hover>{{ $page }}</a></li>
                         @endif
                     @endforeach
@@ -46,8 +45,9 @@
             {{-- Next Page Link --}}
             @if ($paginator->hasMorePages())
                 <li class="page-item">
-                    <a class="page-link" href="{{ $paginator->nextPageUrl() }}" rel="next"
-                        aria-label="@lang('pagination.next')">
+                    <a class="page-link"
+                        href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->nextPageUrl()) }}"
+                        rel="next" aria-label="@lang('pagination.next')">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
