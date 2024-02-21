@@ -1,63 +1,65 @@
 @if ($paginator->hasPages())
+    @php
+        $pagination_uiid = Str::random(6);
+
+        $current = $paginator->currentPage();
+        $last = $paginator->lastPage();
+        $delta = 3; // 3 pages before and after the current page
+        $startPage = max($current - $delta, 1);
+        $endPage = min($current + $delta, $last);
+    @endphp
+
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
 
-            {{-- Previous Page Link --}}
-            @if ($paginator->onFirstPage())
-                <li class="page-item disabled" aria-disabled="true">
-                    <a class="page-link" href="javascript:void(0)" aria-label="@lang('pagination.previous')">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-            @else
-                <li class="page-item">
-                    <a class="page-link"
-                        href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->previousPageUrl()) }}"
-                        rel="prev" aria-label="@lang('pagination.previous')">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-            @endif
+            {{-- First and Previous Page Links --}}
+            <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}"
+                wire:key="paginator-page-{{ $pagination_uiid }}-first">
+                <a class="page-link"
+                    href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->url(1)) }}"
+                    aria-label="@lang('pagination.first')">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item {{ $paginator->onFirstPage() ? 'disabled' : '' }}"
+                wire:key="paginator-page-{{ $pagination_uiid }}-previous">
+                <a class="page-link"
+                    href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->previousPageUrl()) }}"
+                    aria-label="@lang('pagination.previous')">
+                    <span aria-hidden="true">&lt;</span>
+                </a>
+            </li>
+
 
             {{-- Pagination Elements --}}
-            @foreach ($elements as $element)
-                {{-- "Three Dots" Separator --}}
-                @if (is_string($element))
-                    <li class="page-item disabled" aria-disabled="true"><span
-                            class="page-link">{{ $element }}</span></li>
-                @endif
-
-                {{-- Array Of Links --}}
-                @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
-                            <li class="page-item active" wire:key="paginator-page-{{ $page }}"><a
-                                    class="page-link" href="javascript:void(0)">{{ $page }}</a></li>
-                        @else
-                            <li class="page-item" wire:key="paginator-page-{{ $page }}"><a class="page-link"
-                                    href="{{ str_replace(url()->current(), Livewire::originalUrl(), $url) }}"
-                                    wire:navigate.hover>{{ $page }}</a></li>
-                        @endif
-                    @endforeach
-                @endif
-            @endforeach
-
-            {{-- Next Page Link --}}
-            @if ($paginator->hasMorePages())
-                <li class="page-item">
-                    <a class="page-link"
-                        href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->nextPageUrl()) }}"
-                        rel="next" aria-label="@lang('pagination.next')">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
+            @for ($page = $startPage; $page <= $endPage; $page++)
+                <li class="page-item {{ $page == $current ? 'active' : '' }}"
+                    wire:key="paginator-page-{{ $pagination_uiid }}-{{ $page }}">
+                    <a class="page-link" href="{{ str_replace(url()->current(), Livewire::originalUrl(), $url) }}"
+                        wire:navigate.hover>{{ $page }}</a>
                 </li>
-            @else
-                <li class="page-item disabled" aria-disabled="true">
-                    <a class="page-link" href="javascript:void(0)" aria-label="@lang('pagination.next')">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            @endif
+            @endfor
+
+
+            {{-- Next and Last Page Links --}}
+            <li class="page-item {{ !$paginator->hasMorePages() ? 'disabled' : '' }}"
+                wire:key="paginator-page-{{ $pagination_uiid }}-next">
+                <a class="page-link"
+                    href="{{ str_replace(url()->current(), Livewire::originalUrl(), $paginator->nextPageUrl()) }}"
+                    aria-label="@lang('pagination.next')">
+                    <span aria-hidden="true">&gt;</span>
+                </a>
+            </li>
+
+            <li class="page-item {{ $paginator->currentPage() == $paginator->lastPage() ? 'disabled' : '' }}"
+                wire:key="paginator-page-{{ $pagination_uiid }}-last">
+                <a class="page-link"
+                    href="{{ $paginator->currentPage() == $paginator->lastPage() ? 'javascript:void(0)' : str_replace(url()->current(), Livewire::originalUrl(), $paginator->url($paginator->lastPage())) }}"
+                    aria-label="@lang('pagination.last')">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
         </ul>
     </nav>
 @endif
